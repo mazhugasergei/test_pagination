@@ -2,13 +2,23 @@ import md5 from "md5"
 import { useEffect, useState } from "react"
 import Nav from "./components/Nav"
 import { useSearchParams } from "react-router-dom"
+import Filters from "./components/Filters"
 
 export default () => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const page = searchParams.get("page") | 0
+	const product = searchParams.get("product")
+	const brand = searchParams.get("brand")
+	const price = searchParams.get("price")
 	const [ids, setIds] = useState([])
 	const [items, setItems] = useState()
 	const perPage = 50
+
+	const resetPage = () => {
+		const params = {}
+		searchParams.forEach((value, key) => (params[key] = value))
+		setSearchParams({ ...params, page: 0 })
+	}
 
 	const fetchWithRetry = async (url, options, retries = 5, retryDelay = 1000) => {
 		try {
@@ -33,10 +43,19 @@ export default () => {
 	}
 
 	const fetchIds = async () => {
+		const reqBody = { action: "get_ids" }
+		if (product || brand || price) {
+			reqBody.action = "filter"
+			reqBody.params = {}
+		}
+		if (product) reqBody.params.product = product
+		if (brand) reqBody.params.brand = brand
+		if (price) reqBody.params.price = parseFloat(price)
+
+		console.log(reqBody)
+
 		await fetchWithRetry("https://api.valantis.store:41000/", {
-			body: JSON.stringify({
-				action: "get_ids",
-			}),
+			body: JSON.stringify(reqBody),
 		}).then(({ result }) => {
 			let res = []
 			for (let i = 0; i < result.length; i += perPage) {
@@ -47,12 +66,18 @@ export default () => {
 	}
 
 	const fetchItems = async () => {
+		if (page >= ids.length) {
+			resetPage()
+			return
+		}
+
 		await fetchWithRetry("https://api.valantis.store:41000/", {
 			body: JSON.stringify({
 				action: "get_items",
 				params: { ids: ids[searchParams.get("page")] },
 			}),
 		}).then(({ result }) => {
+			// remove ids duplicates
 			const seen = {}
 			const res = []
 
@@ -62,17 +87,19 @@ export default () => {
 					res.push(obj)
 				}
 			}
+
 			setItems(res)
 		})
 	}
 
 	useEffect(() => {
-		if (!searchParams.get("page")) {
-			setSearchParams({ page: 0 })
-		}
-
-		fetchIds()
+		if (!searchParams.get("page")) resetPage()
 	}, [])
+
+	useEffect(() => {
+		setItems()
+		fetchIds()
+	}, [product, brand, price])
 
 	useEffect(() => {
 		setItems()
@@ -84,12 +111,15 @@ export default () => {
 	}, [ids])
 
 	return (
-		<div className="max-w-[40rem] border rounded-xl p-4 my-4 mx-auto">
+		<div className="max-w-[45rem] border rounded-xl p-4 my-4 mx-auto">
+			<Filters />
+
 			<Nav {...{ ids }} />
 
 			<div className="grid grid-cols-2 gap-2 my-2">
 				{items?.map(({ id, brand, product, price }, i) => (
 					<div key={id} className="flex flex-col border rounded-md p-2">
+						<p>[{id}]</p>
 						{brand && <p className="font-bold">{brand}</p>}
 						<p>{product}</p>
 						<p className="font-bold mt-auto">{price}</p>

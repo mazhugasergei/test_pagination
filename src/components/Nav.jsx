@@ -4,12 +4,18 @@ export default ({ ids }) => {
 	const [searchParams, setSearchParams] = useSearchParams()
 	const page = searchParams.get("page") | 0
 
+	const getParams = () => {
+		const params = {}
+		searchParams.forEach((value, key) => (params[key] = value))
+		return params
+	}
+
 	return (
 		<nav className="flex gap-2">
 			<button
 				disabled={!page}
 				onClick={() => {
-					setSearchParams({ page: parseInt(searchParams.get("page")) - 1 })
+					setSearchParams({ ...getParams(), page: parseInt(searchParams.get("page")) - 1 })
 				}}
 				className="disabled:opacity-50 w-8 h-8 text-xs border rounded-md"
 			>
@@ -23,7 +29,7 @@ export default ({ ids }) => {
 							<li key={i}>
 								<button
 									className={`${i === page ? "bg-[#eee]" : ""} w-8 h-8 text-xs border rounded-md`}
-									onClick={() => setSearchParams({ page: i })}
+									onClick={() => setSearchParams({ ...getParams(), page: i })}
 								>
 									{i}
 								</button>
@@ -35,7 +41,7 @@ export default ({ ids }) => {
 
 			<button
 				disabled={page === ids.length - 1}
-				onClick={() => setSearchParams({ page: parseInt(searchParams.get("page")) + 1 })}
+				onClick={() => setSearchParams({ ...getParams(), page: parseInt(searchParams.get("page")) + 1 })}
 				className="disabled:opacity-50 w-8 h-8 text-xs border rounded-md"
 			>
 				→
