@@ -33,7 +33,7 @@ export default () => {
 	}
 
 	const fetchIds = async () => {
-		await fetchWithRetry("http://api.valantis.store:40000/", {
+		await fetchWithRetry("https://api.valantis.store:41000/", {
 			body: JSON.stringify({
 				action: "get_ids",
 			}),
@@ -47,7 +47,7 @@ export default () => {
 	}
 
 	const fetchItems = async () => {
-		await fetchWithRetry("http://api.valantis.store:40000/", {
+		await fetchWithRetry("https://api.valantis.store:41000/", {
 			body: JSON.stringify({
 				action: "get_items",
 				params: { ids: ids[searchParams.get("page")] },
