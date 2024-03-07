@@ -52,15 +52,13 @@ export default () => {
 		if (brand) reqBody.params.brand = brand
 		if (price) reqBody.params.price = parseFloat(price)
 
-		console.log(reqBody)
-
 		await fetchWithRetry("https://api.valantis.store:41000/", {
 			body: JSON.stringify(reqBody),
 		}).then(({ result }) => {
+			const arr = [...new Set(result)] // remove ids duplicates
 			let res = []
-			for (let i = 0; i < result.length; i += perPage) {
-				res.push(result.slice(i, i + perPage))
-			}
+			// split ids into perPage size chunks
+			for (let i = 0; i < arr.length; i += perPage) res.push(arr.slice(i, i + perPage))
 			setIds(res)
 		})
 	}
@@ -77,7 +75,7 @@ export default () => {
 				params: { ids: ids[searchParams.get("page")] },
 			}),
 		}).then(({ result }) => {
-			// remove ids duplicates
+			// remove items duplicates
 			const seen = {}
 			const res = []
 
