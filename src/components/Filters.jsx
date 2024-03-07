@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
 
 export default () => {
@@ -12,6 +12,15 @@ export default () => {
 		const params = {}
 		searchParams.forEach((value, key) => (params[key] = value))
 		setSearchParams({ ...params, product, brand, price, page: 0 })
+	}
+
+	const clearFilters = () => {
+		setProduct("")
+		setBrand("")
+		setPrice("")
+		const params = {}
+		searchParams.forEach((value, key) => (params[key] = value))
+		setSearchParams({ ...params, product: "", brand: "", price: "", page: 0 })
 	}
 
 	return (
@@ -35,6 +44,13 @@ export default () => {
 				className="text-sm border rounded-md px-3 py-2"
 			/>
 			<button className="text-sm font-medium text-[#fff] bg-[#000] rounded-md px-3 py-2">Submit</button>
+			<button
+				type="button"
+				onClick={clearFilters}
+				className="text-sm font-medium text-[#000] bg-[#fff] border rounded-md px-3 py-2"
+			>
+				Clear
+			</button>
 		</form>
 	)
 }

@@ -109,7 +109,7 @@ export default () => {
 	}, [ids])
 
 	return (
-		<div className="max-w-[45rem] border rounded-xl p-4 my-4 mx-auto">
+		<div className="max-w-[47rem] border rounded-xl p-4 my-4 mx-auto">
 			<Filters />
 
 			<Nav {...{ ids }} />
