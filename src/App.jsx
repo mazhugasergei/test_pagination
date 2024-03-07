@@ -67,7 +67,7 @@ export default () => {
 	}
 
 	useEffect(() => {
-		if (typeof searchParams.get("page") !== "number") {
+		if (!searchParams.get("page")) {
 			setSearchParams({ page: 0 })
 		}
 
