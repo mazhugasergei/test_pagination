@@ -23,8 +23,8 @@ export default ({ ids }) => {
 			</button>
 
 			<ul className="flex gap-1 mx-auto">
-				{ids.map((chunk, i) => {
-					if (!i || (i >= page - 3 && i <= page + 3) || i === ids.length - 1)
+				{ids?.map((chunk, i) => {
+					if (!i || (i >= page - 3 && i <= page + 3) || i === ids?.length - 1)
 						return (
 							<li key={i}>
 								<button
@@ -40,7 +40,7 @@ export default ({ ids }) => {
 			</ul>
 
 			<button
-				disabled={page === ids.length - 1}
+				disabled={page === ids?.length - 1}
 				onClick={() => setSearchParams({ ...getParams(), page: parseInt(searchParams.get("page")) + 1 })}
 				className="disabled:opacity-50 w-8 h-8 text-xs border rounded-md"
 			>

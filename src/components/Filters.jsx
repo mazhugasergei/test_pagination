@@ -3,15 +3,21 @@ import { useSearchParams } from "react-router-dom"
 
 export default () => {
 	const [searchParams, setSearchParams] = useSearchParams()
-	const [product, setProduct] = useState(searchParams.get("product"))
-	const [brand, setBrand] = useState(searchParams.get("brand"))
-	const [price, setPrice] = useState(searchParams.get("price"))
+	const [product, setProduct] = useState(searchParams.get("product") || "")
+	const [brand, setBrand] = useState(searchParams.get("brand") || "")
+	const [price, setPrice] = useState(searchParams.get("price") || "")
 
 	const onSubmit = (e) => {
 		e.preventDefault()
 		const params = {}
 		searchParams.forEach((value, key) => (params[key] = value))
-		setSearchParams({ ...params, product, brand, price, page: 0 })
+		if (product) params.product = product
+		else delete params.product
+		if (brand) params.brand = brand
+		else delete params.brand
+		if (price) params.price = price
+		else delete params.price
+		setSearchParams({ ...params, page: 0 })
 	}
 
 	const clearFilters = () => {
@@ -20,7 +26,10 @@ export default () => {
 		setPrice("")
 		const params = {}
 		searchParams.forEach((value, key) => (params[key] = value))
-		setSearchParams({ ...params, product: "", brand: "", price: "", page: 0 })
+		delete params.product
+		delete params.brand
+		delete params.price
+		setSearchParams({ ...params, page: 0 })
 	}
 
 	return (

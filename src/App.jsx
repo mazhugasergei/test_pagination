@@ -10,7 +10,7 @@ export default () => {
 	const product = searchParams.get("product")
 	const brand = searchParams.get("brand")
 	const price = searchParams.get("price")
-	const [ids, setIds] = useState([])
+	const [ids, setIds] = useState()
 	const [items, setItems] = useState()
 	const perPage = 50
 
@@ -101,11 +101,11 @@ export default () => {
 
 	useEffect(() => {
 		setItems()
-		if (ids.length) fetchItems()
+		if (ids?.length) fetchItems()
 	}, [page])
 
 	useEffect(() => {
-		if (ids.length) fetchItems()
+		if (ids?.length) fetchItems()
 	}, [ids])
 
 	return (
@@ -115,14 +115,16 @@ export default () => {
 			<Nav {...{ ids }} />
 
 			<div className="grid grid-cols-2 gap-2 my-2">
-				{items?.map(({ id, brand, product, price }, i) => (
-					<div key={id} className="flex flex-col border rounded-md p-2">
-						<p>[{id}]</p>
-						{brand && <p className="font-bold">{brand}</p>}
-						<p>{product}</p>
-						<p className="font-bold mt-auto">{price}</p>
-					</div>
-				)) || "loading..."}
+				{ids?.length === 0
+					? "no items"
+					: items?.map(({ id, brand, product, price }, i) => (
+							<div key={id} className="flex flex-col border rounded-md p-2">
+								<p>[{id}]</p>
+								{brand && <p className="font-bold">{brand}</p>}
+								<p>{product}</p>
+								<p className="font-bold mt-auto">{price}</p>
+							</div>
+					  )) || "loading..."}
 			</div>
 
 			<Nav {...{ ids }} />
